@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.core.view.children
 import xyz.juncat.videoeditor.databinding.ActivityMainBinding
+import xyz.juncat.videoeditor.frames.FramesExtractActivity
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -58,6 +59,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         when (viewId) {
             R.id.btn_extract_music -> {
                 intent.setClass(this, MusicExtractorActivity::class.java)
+            }
+            R.id.btn_extract_frames -> {
+                intent.setClass(this, FramesExtractActivity::class.java)
             }
         }
         if (viewId > 0) startActivity(intent)

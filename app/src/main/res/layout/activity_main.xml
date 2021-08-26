@@ -7,9 +7,15 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_extract_music"
         android:text="extract music"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_extract_frames"
+        android:text="extract bitmap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

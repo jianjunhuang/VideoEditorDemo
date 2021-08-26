@@ -27,7 +27,9 @@ class SimplePlayer private constructor(
     private fun initPlayer() {
         stop()
         uri?.let {
-            player = SimpleExoPlayer.Builder(context).build()
+            player = SimpleExoPlayer.Builder(context)
+                .setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT)
+                .build()
             val mediaItem = MediaItem.fromUri(it)
             player?.setMediaItem(mediaItem)
             player?.setVideoTextureView(textureView)

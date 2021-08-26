@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="xyz.juncat.videoeditor">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -18,6 +20,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MusicExtractorActivity" />
+        <activity android:name=".frames.FramesExtractActivity" />
     </application>
 
 </manifest>
