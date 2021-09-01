@@ -91,7 +91,8 @@ class VideoListHorizontalAdapter : RecyclerView.Adapter<VideoListHorizontalAdapt
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
         super.onViewDetachedFromWindow(holder)
         Log.i(TAG, "onViewDetachedFromWindow: ")
-        holder.item.stop()
+//        holder.item.stop()
+        VideoPlayerManager.add(holder.item)
     }
 
     class ViewHolder(val item: VideoItemView) : RecyclerView.ViewHolder(item) {

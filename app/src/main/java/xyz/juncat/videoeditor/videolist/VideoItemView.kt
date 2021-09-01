@@ -23,7 +23,7 @@ class VideoItemView : ViewGroup, SimplePlayer.Callback {
         this@VideoItemView.addView(this)
     }
 
-    private var player: SimplePlayer? = null
+    var player: SimplePlayer? = null
     private var videoUri: Uri? = null
 
     constructor(context: Context) : this(context, null)

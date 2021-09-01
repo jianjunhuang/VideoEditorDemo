@@ -41,10 +41,12 @@ class VideoListVerticalAdapter :
         super.onViewDetachedFromWindow(holder)
         Log.i(TAG, "onViewDetachedFromWindow: ")
         val recyclerView = holder.item.videoRecyclerView
+        //stop when idle
         recyclerView.children
             .forEach {
                 (recyclerView.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder).let {
-                    it.item.stop()
+//                    it.item.stop()
+                    VideoPlayerManager.add(it.item)
                 }
             }
     }

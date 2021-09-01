@@ -9,6 +9,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SimplePlayer private constructor(
     private val context: Context,
@@ -20,6 +23,18 @@ class SimplePlayer private constructor(
     private var player: SimpleExoPlayer? = null
 
     private var callback: Callback? = null
+
+    private val listener = object : Player.Listener {
+        override fun onPlayerError(error: ExoPlaybackException) {
+            super.onPlayerError(error)
+            error.printStackTrace()
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            callback?.onPlayingCallback(isPlaying)
+        }
+    }
 
     init {
         lifecycle?.addObserver(this)
@@ -36,17 +51,7 @@ class SimplePlayer private constructor(
             player?.setMediaItem(mediaItem)
             player?.setVideoTextureView(textureView)
             player?.repeatMode = Player.REPEAT_MODE_ALL
-            player?.addListener(object : Player.Listener {
-                override fun onPlayerError(error: ExoPlaybackException) {
-                    super.onPlayerError(error)
-                    error.printStackTrace()
-                }
-
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    super.onIsPlayingChanged(isPlaying)
-                    callback?.onPlayingCallback(isPlaying)
-                }
-            })
+            player?.addListener(listener)
             player?.playWhenReady = false
             player?.prepare()
         }
@@ -67,7 +72,10 @@ class SimplePlayer private constructor(
     }
 
     fun stop() {
+        player?.stop()
         player?.release()
+        player?.setVideoTextureView(null)
+        player?.removeListener(listener)
         player = null
     }
 

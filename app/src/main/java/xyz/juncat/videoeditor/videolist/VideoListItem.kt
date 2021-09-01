@@ -40,23 +40,26 @@ class VideoListItem : CustomViewGroup {
                 super.onScrollStateChanged(recyclerView, newState)
                 when (newState) {
                     RecyclerView.SCROLL_STATE_IDLE -> {
+                        recyclerView.post {
+                            VideoPlayerManager.clear()
+                            recyclerView.children
+                                .forEach {
+                                    (recyclerView.getChildViewHolder(it)
+                                            as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
+                                        holder.item.restart()
+                                    }
+                                }
+                        }
+                    }
+                    else -> {
+                        // the following code will cause ui freeze
                         recyclerView.children
                             .forEach {
                                 (recyclerView.getChildViewHolder(it)
                                         as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
-                                    holder.item.restart()
+                                    holder.item.stop()
                                 }
                             }
-                    }
-                    else -> {
-                        // the following code will cause ui freeze
-//                        recyclerView.children
-//                            .forEach {
-//                                (recyclerView.getChildViewHolder(it)
-//                                        as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
-//                                    holder.item.stop()
-//                                }
-//                            }
                     }
                 }
             }

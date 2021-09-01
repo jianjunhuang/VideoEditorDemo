@@ -28,19 +28,23 @@ class VideoListFragment : Fragment() {
                     super.onScrollStateChanged(recyclerView, newState)
                     when (newState) {
                         RecyclerView.SCROLL_STATE_IDLE -> {
-                            recyclerView.children.forEach {
-                                (recyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
-                                    .item
-                                    .videoRecyclerView
-                                    .let { childRv ->
-                                        childRv
-                                            .children
-                                            .forEach {
-                                                (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
-                                                    .item.restart()
-                                            }
-                                    }
+                            recyclerView.post {
+                                VideoPlayerManager.clear()
+                                recyclerView.children.forEach {
+                                    (recyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
+                                        .item
+                                        .videoRecyclerView
+                                        .let { childRv ->
+                                            childRv
+                                                .children
+                                                .forEach {
+                                                    (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
+                                                        .item.restart()
+                                                }
+                                        }
+                                }
                             }
+
                         }
                         else -> {
                             // the following code will cause ui freeze
