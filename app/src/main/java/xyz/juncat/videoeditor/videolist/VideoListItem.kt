@@ -20,7 +20,9 @@ class VideoListItem : CustomViewGroup {
     }
 
     val videoRecyclerView = RecyclerView(context).added {
-        layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false).apply {
+            initialPrefetchItemCount = 2
+        }
         setHasFixedSize(true)
         addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(
