@@ -11,6 +11,10 @@
 ## [Video List]()
 Play multi videos at `RecyclerView`
 
+- Tips
+  - Do not play videos on `SCROLL_STATE_DRAGGING` ,`SCROLL_STATE_SETTLING` and fling
+  - Delay release player. The release operation will occupy the main thread and cause lag
+
 - `ExoPlayer`
 - `IJKPlayer` 
 - `MediaPlayer`
