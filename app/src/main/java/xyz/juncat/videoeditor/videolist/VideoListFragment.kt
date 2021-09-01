@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,13 +13,9 @@ import androidx.recyclerview.widget.RecyclerView
 class VideoListFragment : Fragment() {
 
     private val adapter = VideoListVerticalAdapter()
+    private val videoRecyclerView by lazy {
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return RecyclerView(requireContext()).apply {
+        RecyclerView(requireContext()).apply {
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
@@ -31,15 +28,48 @@ class VideoListFragment : Fragment() {
                     super.onScrollStateChanged(recyclerView, newState)
                     when (newState) {
                         RecyclerView.SCROLL_STATE_IDLE -> {
-                            //todo resume play
+                            recyclerView.children.forEach {
+                                (recyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
+                                    .item
+                                    .videoRecyclerView
+                                    .let { childRv ->
+                                        childRv
+                                            .children
+                                            .forEach {
+                                                (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
+                                                    .item.restart()
+                                            }
+                                    }
+                            }
                         }
                         else -> {
-                            //todo pause play
+                            // the following code will cause ui freeze
+//                            recyclerView.children.forEach {
+//                                (recyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
+//                                    .item
+//                                    .videoRecyclerView
+//                                    .let { childRv ->
+//                                        childRv
+//                                            .children
+//                                            .forEach {
+//                                                (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
+//                                                    .item.stop()
+//                                            }
+//                                    }
+//                            }
                         }
                     }
                 }
             })
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return videoRecyclerView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,12 +81,36 @@ class VideoListFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        //todo pause video
+        videoRecyclerView.children.forEach {
+            (videoRecyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
+                .item
+                .videoRecyclerView
+                .let { childRv ->
+                    childRv
+                        .children
+                        .forEach {
+                            (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
+                                .item.stop()
+                        }
+                }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        //todo resume video
+        videoRecyclerView.children.forEach {
+            (videoRecyclerView.getChildViewHolder(it) as VideoListVerticalAdapter.VerticalViewHolder)
+                .item
+                .videoRecyclerView
+                .let { childRv ->
+                    childRv
+                        .children
+                        .forEach {
+                            (childRv.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder)
+                                .item.restart()
+                        }
+                }
+        }
     }
 
     override fun onDestroy() {

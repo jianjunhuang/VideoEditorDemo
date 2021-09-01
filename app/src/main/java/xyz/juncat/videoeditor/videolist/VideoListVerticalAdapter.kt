@@ -1,17 +1,20 @@
 package xyz.juncat.videoeditor.videolist
 
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import com.jianjun.base.ext.dp
 
 class VideoListVerticalAdapter :
     RecyclerView.Adapter<VideoListVerticalAdapter.VerticalViewHolder>() {
-
+    private val TAG = "VideoListVerticalAdapte"
     private val dataList = ArrayList<VideoListData>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VerticalViewHolder {
         return VerticalViewHolder(VideoListItem(parent.context).apply {
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200f.dp.toInt())
+            layoutParams =
+                ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200f.dp.toInt())
         })
     }
 
@@ -29,14 +32,32 @@ class VideoListVerticalAdapter :
         notifyDataSetChanged()
     }
 
-    class VerticalViewHolder(private val item: VideoListItem) : RecyclerView.ViewHolder(item) {
+    override fun onViewAttachedToWindow(holder: VerticalViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        Log.i(TAG, "onViewAttachedToWindow: ")
+    }
+
+    override fun onViewDetachedFromWindow(holder: VerticalViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        Log.i(TAG, "onViewDetachedFromWindow: ")
+        val recyclerView = holder.item.videoRecyclerView
+        recyclerView.children
+            .forEach {
+                (recyclerView.getChildViewHolder(it) as VideoListHorizontalAdapter.ViewHolder).let {
+                    it.item.stop()
+                }
+            }
+    }
+
+    class VerticalViewHolder(val item: VideoListItem) : RecyclerView.ViewHolder(item) {
 
         fun bind(data: VideoListData) {
             if (item.videoRecyclerView.adapter == null) {
                 item.videoRecyclerView.adapter = VideoListHorizontalAdapter()
             }
             (item.videoRecyclerView.adapter as? VideoListHorizontalAdapter)?.update(data.list)
-            item.title.setText(data.category)
+            item.title.setText(data.category + " - ${data.list.size}")
         }
     }
+
 }

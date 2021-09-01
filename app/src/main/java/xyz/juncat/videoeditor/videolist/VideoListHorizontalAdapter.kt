@@ -3,6 +3,7 @@ package xyz.juncat.videoeditor.videolist
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,11 +14,13 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.jianjun.base.ext.dp
+import com.jianjun.base.ext.invisible
+import com.jianjun.base.ext.visible
 
 class VideoListHorizontalAdapter : RecyclerView.Adapter<VideoListHorizontalAdapter.ViewHolder>() {
 
     private val dataList = ArrayList<VideoData>()
-
+    private val TAG = "VideoListHorizontal"
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val dstHeight = 180f.dp
         val dstWidth = dstHeight * when (viewType) {
@@ -70,11 +73,24 @@ class VideoListHorizontalAdapter : RecyclerView.Adapter<VideoListHorizontalAdapt
 
     override fun onViewAttachedToWindow(holder: ViewHolder) {
         super.onViewAttachedToWindow(holder)
-        holder.item.play(dataList[holder.adapterPosition].videoUri)
+        Log.i(TAG, "onViewAttachedToWindow: ")
+        val recyclerView = holder.itemView.parent
+        val parentRecyclerView = recyclerView.parent.parent as RecyclerView
+        if (recyclerView is RecyclerView
+            && (recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE
+                    || parentRecyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE)
+        ) {
+            //for resume video
+            holder.item.setVideoUri(dataList[holder.adapterPosition].videoUri)
+            holder.item.textureView.invisible()
+        } else {
+            holder.item.play(dataList[holder.adapterPosition].videoUri)
+        }
     }
 
     override fun onViewDetachedFromWindow(holder: ViewHolder) {
         super.onViewDetachedFromWindow(holder)
+        Log.i(TAG, "onViewDetachedFromWindow: ")
         holder.item.stop()
     }
 

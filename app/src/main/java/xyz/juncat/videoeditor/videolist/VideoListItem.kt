@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.widget.TextView
+import androidx.core.view.children
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jianjun.base.ext.*
@@ -32,7 +34,30 @@ class VideoListItem : CustomViewGroup {
             }
         })
         addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                when (newState) {
+                    RecyclerView.SCROLL_STATE_IDLE -> {
+                        recyclerView.children
+                            .forEach {
+                                (recyclerView.getChildViewHolder(it)
+                                        as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
+                                    holder.item.restart()
+                                }
+                            }
+                    }
+                    else -> {
+                        // the following code will cause ui freeze
+//                        recyclerView.children
+//                            .forEach {
+//                                (recyclerView.getChildViewHolder(it)
+//                                        as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
+//                                    holder.item.stop()
+//                                }
+//                            }
+                    }
+                }
+            }
         })
     }
 

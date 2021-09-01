@@ -13,17 +13,18 @@ import com.jianjun.base.ext.invisible
 import com.jianjun.base.ext.visible
 import xyz.juncat.videoeditor.SimplePlayer
 
-class VideoItemView : ViewGroup {
-
-    val textureView = TextureView(context).apply {
-        this@VideoItemView.addView(this)
-    }
+class VideoItemView : ViewGroup, SimplePlayer.Callback {
 
     val cover = ImageView(context).apply {
         this@VideoItemView.addView(this)
     }
 
+    val textureView = TextureView(context).apply {
+        this@VideoItemView.addView(this)
+    }
+
     private var player: SimplePlayer? = null
+    private var videoUri: Uri? = null
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, -1)
@@ -50,22 +51,48 @@ class VideoItemView : ViewGroup {
         cover.layout(0, 0, width, height)
     }
 
+    fun setVideoUri(videoUri: Uri) {
+        this.videoUri = videoUri
+    }
+
     fun play(videoUri: Uri) {
-        VideoPlayCounter.play()
+        setVideoUri(videoUri)
+        if (player == null)
+            VideoPlayCounter.play()
         stop()
-        VideoPlayCounter.play()
         player = SimplePlayer.Builder(context)
             .setVideoView(textureView)
             .setVideoUri(videoUri)
+            .setCallback(this)
             .build()
         player?.play()
-        cover.invisible()
+        textureView.visible()
     }
 
     fun stop() {
+        if (player != null)
+            VideoPlayCounter.stop()
         player?.stop()
         player = null
-        cover.visible()
-        VideoPlayCounter.stop()
+        textureView.invisible()
     }
+
+    fun restart() {
+        if (player != null) {
+            return
+        }
+        videoUri?.let {
+            play(it)
+        }
+    }
+
+    override fun onPlayingCallback(isPlaying: Boolean) {
+        if (isAttachedToWindow)
+            if (isPlaying) {
+                textureView.visible()
+            } else {
+                textureView.invisible()
+            }
+    }
+
 }

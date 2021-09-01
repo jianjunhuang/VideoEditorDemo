@@ -19,6 +19,8 @@ class SimplePlayer private constructor(
 
     private var player: SimpleExoPlayer? = null
 
+    private var callback: Callback? = null
+
     init {
         lifecycle?.addObserver(this)
         initPlayer()
@@ -38,6 +40,11 @@ class SimplePlayer private constructor(
                 override fun onPlayerError(error: ExoPlaybackException) {
                     super.onPlayerError(error)
                     error.printStackTrace()
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    callback?.onPlayingCallback(isPlaying)
                 }
             })
             player?.playWhenReady = false
@@ -84,6 +91,7 @@ class SimplePlayer private constructor(
         private var lifecycle: Lifecycle? = null
         private var uri: Uri? = null
         private var view: TextureView? = null
+        private var callback: Callback? = null
 
         fun registerLifecycle(lifecycle: Lifecycle): Builder {
             this.lifecycle = lifecycle
@@ -100,9 +108,25 @@ class SimplePlayer private constructor(
             return this
         }
 
+        fun setCallback(callback: Callback): Builder {
+            this.callback = callback
+            return this
+        }
+
         fun build(): SimplePlayer {
-            return SimplePlayer(context, lifecycle, uri, view ?: TextureView(context))
+            return SimplePlayer(context, lifecycle, uri, view ?: TextureView(context)).apply {
+                callback?.let {
+                    setCallback(it)
+                }
+            }
         }
     }
 
+    interface Callback {
+        fun onPlayingCallback(isPlaying: Boolean)
+    }
+
+    fun setCallback(callback: Callback) {
+        this.callback = callback
+    }
 }
