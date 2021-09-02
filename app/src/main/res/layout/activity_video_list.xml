@@ -9,7 +9,6 @@
         android:id="@+id/chip_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:checkedChip="@id/chip_exo"
         app:selectionRequired="true"
         app:singleSelection="true">
 

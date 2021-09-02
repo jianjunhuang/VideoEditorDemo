@@ -34,5 +34,8 @@ class VideoListActivity : AppCompatActivity() {
                     .commitAllowingStateLoss()
             }
         }
+        binding.chipExo.post {
+            binding.chipExo.isChecked = true
+        }
     }
 }
