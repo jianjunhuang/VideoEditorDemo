@@ -19,7 +19,6 @@ class VideoListActivity : AppCompatActivity() {
 
         binding.chipGroup.isSelectionRequired = true
         binding.chipGroup.isSingleSelection = true
-        binding.chipGroup.setSingleSelection(R.id.chip_exo)
         binding.chipGroup.setOnCheckedChangeListener { group, checkedId ->
             VideoPlayerManager.selectedPlayer = when (checkedId) {
                 R.id.chip_exo -> {
@@ -35,6 +34,5 @@ class VideoListActivity : AppCompatActivity() {
                     .commitAllowingStateLoss()
             }
         }
-
     }
 }
