@@ -24,6 +24,7 @@
         <activity android:name=".MusicExtractorActivity" />
         <activity android:name=".frames.FramesExtractActivity" />
         <activity android:name=".videolist.VideoListActivity" />
+        <activity android:name=".ijk.IjkPlayActivity" />
     </application>
 
 </manifest>
