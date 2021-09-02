@@ -1,8 +1,11 @@
 package xyz.juncat.videoeditor.videolist
 
 import android.content.Context
+import android.graphics.SurfaceTexture
 import android.net.Uri
 import android.util.AttributeSet
+import android.util.Log
+import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
@@ -11,19 +14,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import com.jianjun.base.ext.invisible
 import com.jianjun.base.ext.visible
+import tv.danmaku.ijk.media.player.IMediaPlayer
+import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import xyz.juncat.videoeditor.SimplePlayer
+import xyz.juncat.videoeditor.player.SimpleExoMediaPlayer
 
 class VideoItemView : ViewGroup, SimplePlayer.Callback {
 
     val cover = ImageView(context).apply {
         this@VideoItemView.addView(this)
     }
+    var player: IMediaPlayer? = null
+    private var playerSurface: Surface? = null
 
     val textureView = TextureView(context).apply {
         this@VideoItemView.addView(this)
     }
 
-    var player: SimplePlayer? = null
     private var videoUri: Uri? = null
 
     constructor(context: Context) : this(context, null)
@@ -60,12 +67,56 @@ class VideoItemView : ViewGroup, SimplePlayer.Callback {
         if (player == null)
             VideoPlayCounter.play()
         stop()
-        player = SimplePlayer.Builder(context)
-            .setVideoView(textureView)
-            .setVideoUri(videoUri)
-            .setCallback(this)
-            .build()
-        player?.play()
+        Log.i(TAG, "play: ")
+//        player = SimpleExoMediaPlayer(context)
+        player = IjkMediaPlayer()
+        player?.setDataSource(context, videoUri)
+        player?.isLooping = true
+        if (playerSurface != null && playerSurface?.isValid == true) {
+            player?.setSurface(playerSurface)
+            player?.prepareAsync()
+            Log.i(TAG, "play: prepare")
+        } else {
+            val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                override fun onSurfaceTextureAvailable(
+                    surface: SurfaceTexture,
+                    width: Int,
+                    height: Int
+                ) {
+                    playerSurface?.release()
+                    playerSurface = Surface(surface)
+                    player?.setSurface(playerSurface)
+                    if (player?.isPlaying == false) {
+                        player?.prepareAsync()
+                        Log.i(TAG, "onSurfaceTextureAvailable: ")
+                    }
+                }
+
+                override fun onSurfaceTextureSizeChanged(
+                    surface: SurfaceTexture,
+                    width: Int,
+                    height: Int
+                ) {
+
+                }
+
+                override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                    Log.i(TAG, "onSurfaceTextureDestroyed: ")
+                    VideoPlayerManager.add(this@VideoItemView)
+                    playerSurface?.release()
+                    surface.release()
+                    playerSurface = null
+                    textureView.surfaceTextureListener = null
+                    return true
+                }
+
+                override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
+
+                }
+
+            }
+            textureView.surfaceTextureListener = surfaceTextureListener
+        }
         textureView.visible()
     }
 
@@ -95,4 +146,7 @@ class VideoItemView : ViewGroup, SimplePlayer.Callback {
             }
     }
 
+    companion object {
+        private const val TAG = "VideoItemView"
+    }
 }

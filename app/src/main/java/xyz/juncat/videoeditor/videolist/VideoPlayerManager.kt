@@ -16,7 +16,6 @@ object VideoPlayerManager {
         pendingReleaseQueue.add(WeakReference(player))
     }
 
-    //TODO: Optimization: stop clear when user scroll again
     fun clear() {
         while (pendingReleaseQueue.isNotEmpty()) {
             pendingReleaseQueue.pollFirst()?.get()?.stop()

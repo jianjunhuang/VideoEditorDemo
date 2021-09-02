@@ -9,13 +9,15 @@ import android.view.SurfaceHolder
 import android.view.TextureView
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import tv.danmaku.ijk.media.player.IMediaPlayer
 import tv.danmaku.ijk.media.player.IjkMediaPlayer
 import xyz.juncat.videoeditor.databinding.ActivityIjkPlayerBinding
+import xyz.juncat.videoeditor.player.SimpleExoMediaPlayer
 
 class IjkPlayActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityIjkPlayerBinding
-    private var player: IjkMediaPlayer? = null
+    private var player: IMediaPlayer? = null
     private var playerSurface: Surface? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
