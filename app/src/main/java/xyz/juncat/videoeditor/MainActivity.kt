@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.children
 import xyz.juncat.videoeditor.databinding.ActivityMainBinding
 import xyz.juncat.videoeditor.frames.FramesExtractActivity
+import xyz.juncat.videoeditor.videolist.VideoListActivity
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -62,6 +63,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.btn_extract_frames -> {
                 intent.setClass(this, FramesExtractActivity::class.java)
+            }
+            R.id.btn_video_list -> {
+                intent.setClass(this, VideoListActivity::class.java)
             }
         }
         if (viewId > 0) startActivity(intent)

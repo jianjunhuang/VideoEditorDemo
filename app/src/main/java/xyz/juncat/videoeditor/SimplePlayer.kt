@@ -9,6 +9,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class SimplePlayer private constructor(
     private val context: Context,
@@ -18,6 +21,20 @@ class SimplePlayer private constructor(
 ) : LifecycleObserver {
 
     private var player: SimpleExoPlayer? = null
+
+    private var callback: Callback? = null
+
+    private val listener = object : Player.Listener {
+        override fun onPlayerError(error: ExoPlaybackException) {
+            super.onPlayerError(error)
+            error.printStackTrace()
+        }
+
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            super.onIsPlayingChanged(isPlaying)
+            callback?.onPlayingCallback(isPlaying)
+        }
+    }
 
     init {
         lifecycle?.addObserver(this)
@@ -34,12 +51,7 @@ class SimplePlayer private constructor(
             player?.setMediaItem(mediaItem)
             player?.setVideoTextureView(textureView)
             player?.repeatMode = Player.REPEAT_MODE_ALL
-            player?.addListener(object : Player.Listener {
-                override fun onPlayerError(error: ExoPlaybackException) {
-                    super.onPlayerError(error)
-                    error.printStackTrace()
-                }
-            })
+            player?.addListener(listener)
             player?.playWhenReady = false
             player?.prepare()
         }
@@ -60,7 +72,10 @@ class SimplePlayer private constructor(
     }
 
     fun stop() {
+        player?.stop()
         player?.release()
+        player?.setVideoTextureView(null)
+        player?.removeListener(listener)
         player = null
     }
 
@@ -84,6 +99,7 @@ class SimplePlayer private constructor(
         private var lifecycle: Lifecycle? = null
         private var uri: Uri? = null
         private var view: TextureView? = null
+        private var callback: Callback? = null
 
         fun registerLifecycle(lifecycle: Lifecycle): Builder {
             this.lifecycle = lifecycle
@@ -100,9 +116,25 @@ class SimplePlayer private constructor(
             return this
         }
 
+        fun setCallback(callback: Callback): Builder {
+            this.callback = callback
+            return this
+        }
+
         fun build(): SimplePlayer {
-            return SimplePlayer(context, lifecycle, uri, view ?: TextureView(context))
+            return SimplePlayer(context, lifecycle, uri, view ?: TextureView(context)).apply {
+                callback?.let {
+                    setCallback(it)
+                }
+            }
         }
     }
 
+    interface Callback {
+        fun onPlayingCallback(isPlaying: Boolean)
+    }
+
+    fun setCallback(callback: Callback) {
+        this.callback = callback
+    }
 }
