@@ -53,13 +53,13 @@ class VideoListItem : CustomViewGroup {
                     }
                     else -> {
                         // the following code will cause ui freeze
-                        recyclerView.children
-                            .forEach {
-                                (recyclerView.getChildViewHolder(it)
-                                        as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
-                                    holder.item.stop()
-                                }
-                            }
+//                        recyclerView.children
+//                            .forEach {
+//                                (recyclerView.getChildViewHolder(it)
+//                                        as? VideoListHorizontalAdapter.ViewHolder)?.let { holder ->
+//                                    holder.item.stop()
+//                                }
+//                            }
                     }
                 }
             }

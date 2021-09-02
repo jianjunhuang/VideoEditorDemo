@@ -1,6 +1,8 @@
 package xyz.juncat.videoeditor.videolist
 
+import android.util.Log
 import java.lang.ref.WeakReference
+import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -8,18 +10,20 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 object VideoPlayerManager {
 
-    private val pendingReleaseQueue = CopyOnWriteArrayList<WeakReference<VideoItemView>>()
-
+    private val pendingReleaseQueue = LinkedList<WeakReference<VideoItemView>>()
+    private const val TAG = "VideoPlayerManager"
     fun add(player: VideoItemView) {
         pendingReleaseQueue.add(WeakReference(player))
     }
 
     //TODO: Optimization: stop clear when user scroll again
     fun clear() {
-        pendingReleaseQueue.forEach {
-            it.get()?.stop()
+        while (pendingReleaseQueue.isNotEmpty()) {
+            pendingReleaseQueue.pollFirst()?.get()?.stop()
         }
-        pendingReleaseQueue.clear()
     }
 
+    fun destroy() {
+        pendingReleaseQueue.clear()
+    }
 }
