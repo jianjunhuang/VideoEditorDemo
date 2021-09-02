@@ -25,4 +25,12 @@ object VideoPlayerManager {
     fun destroy() {
         pendingReleaseQueue.clear()
     }
+
+    const val PLAYER_EXO = 0
+    const val PLAYER_IJK = 1
+
+    /**
+     * rebuild VideoListFragment to apply changed
+     */
+    var selectedPlayer: Int = PLAYER_EXO
 }

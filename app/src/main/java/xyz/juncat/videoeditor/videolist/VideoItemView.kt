@@ -67,9 +67,13 @@ class VideoItemView : ViewGroup, SimplePlayer.Callback {
         if (player == null)
             VideoPlayCounter.play()
         stop()
-        Log.i(TAG, "play: ")
-//        player = SimpleExoMediaPlayer(context)
-        player = IjkMediaPlayer()
+        player = if (VideoPlayerManager.selectedPlayer == VideoPlayerManager.PLAYER_EXO) {
+            Log.i(TAG, "player: EXO")
+            SimpleExoMediaPlayer(context)
+        } else {
+            Log.i(TAG, "player: IJK")
+            IjkMediaPlayer()
+        }
         player?.setDataSource(context, videoUri)
         player?.isLooping = true
         if (playerSurface != null && playerSurface?.isValid == true) {
