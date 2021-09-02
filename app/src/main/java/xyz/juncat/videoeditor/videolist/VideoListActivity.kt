@@ -17,19 +17,25 @@ class VideoListActivity : AppCompatActivity() {
         binding = ActivityVideoListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnExo.setOnClickListener {
-
+        binding.chipGroup.isSelectionRequired = true
+        binding.chipGroup.isSingleSelection = true
+        binding.chipGroup.setOnCheckedChangeListener { group, checkedId ->
+            VideoPlayerManager.selectedPlayer = when (checkedId) {
+                R.id.chip_exo -> {
+                    VideoPlayerManager.PLAYER_EXO
+                }
+                else -> {
+                    VideoPlayerManager.PLAYER_IJK
+                }
+            }
+            intent.data?.let {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, VideoListFragment.newInstance(it))
+                    .commitAllowingStateLoss()
+            }
         }
-        binding.btnIjk.setOnClickListener {
-
-        }
-        binding.btnMedia.setOnClickListener {
-
-        }
-        intent.data?.let {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, VideoListFragment.newInstance(it))
-                .commitAllowingStateLoss()
+        binding.chipExo.post {
+            binding.chipExo.isChecked = true
         }
     }
 }

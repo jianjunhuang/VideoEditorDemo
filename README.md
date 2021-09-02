@@ -11,7 +11,7 @@
   - > https://bigflake.com/mediacodec/ExtractMpegFramesTest_egl14.java.txt
 
 ## [Video List](app/src/main/java/xyz/juncat/videoeditor/videolist)
-Play multi videos at `RecyclerView`
+Play multi videos at `RecyclerView` (Of cause, it is better to use smaller videos)
 
 - Tips
   - Do not play videos on `SCROLL_STATE_DRAGGING` ,`SCROLL_STATE_SETTLING` and fling
@@ -19,4 +19,3 @@ Play multi videos at `RecyclerView`
 
 - `ExoPlayer`
 - `IJKPlayer` 
-- `MediaPlayer`
