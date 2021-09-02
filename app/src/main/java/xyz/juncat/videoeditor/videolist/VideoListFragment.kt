@@ -119,7 +119,6 @@ class VideoListFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //todo stop
         VideoPlayerManager.destroy()
     }
 
